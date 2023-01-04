@@ -44,3 +44,13 @@ vim.keymap.set('n', '<leader>q', ':bp<bar>sp<bar>bn<bar>bd<CR>')
  vim.api.nvim_command("autocmd TermOpen * startinsert")
  vim.api.nvim_command("autocmd TermOpen * set nobuflisted")
  vim.api.nvim_command("command OpenTerm bo 10new | lua open_or_create_terminal_buffer('terminal-buffer')")
+
+-- search commands
+vim.api.nvim_command("command -nargs=1 InsensitiveSearch vimgrep /\\c<args>/j `git ls-files`")
+vim.api.nvim_command("command -nargs=1 SensitiveSearch vimgrep /\\C<args>/j `git ls-files`")
+vim.api.nvim_command("command -nargs=1 IS InsensitiveSearch <args>")
+vim.api.nvim_command("command -nargs=1 SS SensitiveSearch <args>")
+
+-- quickfix customizations
+ vim.api.nvim_command("autocmd FileType qf set nobuflisted")
+
