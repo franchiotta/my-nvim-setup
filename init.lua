@@ -28,10 +28,10 @@ vim.keymap.set('n', 'unq', 'di"hPl2x')
 vim.keymap.set('n', 'sunq', 'di\'hPl2x')
 
 --- moving
-vim.keymap.set('i', '<C-f>', '<C-c>la')
-vim.keymap.set('i', '<C-b>', '<C-c>i')
-vim.keymap.set('i', '<C-n>', '<C-c>ja')
-vim.keymap.set('i', '<C-p>', '<C-c>ka')
+vim.keymap.set('i', '<C-f>', 'col(".") == col("$") ? (line(".") == line("$") ? \'<C-c>a\': \'<C-c>jI\') : \'<C-c>la\'', {expr = true})
+vim.keymap.set('i', '<C-b>', 'col(".") == 1 ? (line(".") == 1 ? \'<C-c>i\' : \'<C-c>kA\') : \'<C-c>i\'', {expr = true})
+vim.keymap.set('i', '<C-n>', 'line(".") == line("$") ? \'<C-c>a\' : \'<C-c>ja\'', { expr = true })
+vim.keymap.set('i', '<C-p>', 'line(".") == 1 ? \'<C-c>a\' : \'<C-c>ka\'', { expr = true })
 
 vim.keymap.set('n', '<C-h>', ':bprevious<CR>')
 vim.keymap.set('n', '<C-l>', ':bnext<CR>')
