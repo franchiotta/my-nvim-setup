@@ -38,7 +38,7 @@ vim.keymap.set('n', '<C-l>', ':bnext<CR>')
 
 --- editing
 vim.keymap.set('i', '<C-d>', '<C-c>lxi')
-vim.keymap.set('n', '<leader>q', ':bp<bar>sp<bar>bn<bar>bd<CR>')
+vim.keymap.set('n', '<leader>q', '<cmd>lua delete_current_buffer()<CR>')
 
 -- terminal settings
  vim.api.nvim_command("autocmd TermOpen * startinsert")
