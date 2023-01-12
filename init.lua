@@ -43,7 +43,7 @@ vim.keymap.set('n', '<leader>q', '<cmd>lua delete_current_buffer()<CR>')
 -- terminal settings
  vim.api.nvim_command("autocmd TermOpen * startinsert")
  vim.api.nvim_command("autocmd TermOpen * set nobuflisted")
- vim.api.nvim_command("command OpenTerm bo 10new | lua open_or_create_terminal_buffer('terminal-buffer')")
+ vim.api.nvim_command("command TermOpen bo 10new | lua open_or_create_terminal_buffer('terminal-buffer')")
 
 -- search commands
 vim.api.nvim_command("command -nargs=1 InsensitiveSearch vimgrep /\\c<args>/j `git ls-files`")
