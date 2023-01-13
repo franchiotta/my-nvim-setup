@@ -28,16 +28,16 @@ vim.keymap.set('n', 'unq', 'di"hPl2x')
 vim.keymap.set('n', 'sunq', 'di\'hPl2x')
 
 --- moving
-vim.keymap.set('i', '<C-f>', 'col(".") == col("$") ? (line(".") == line("$") ? \'<C-c>a\': \'<C-c>jI\') : \'<C-c>la\'', {expr = true})
-vim.keymap.set('i', '<C-b>', 'col(".") == 1 ? (line(".") == 1 ? \'<C-c>i\' : \'<C-c>kA\') : \'<C-c>i\'', {expr = true})
-vim.keymap.set('i', '<C-n>', 'line(".") == line("$") ? \'<C-c>a\' : \'<C-c>ja\'', { expr = true })
-vim.keymap.set('i', '<C-p>', 'line(".") == 1 ? \'<C-c>a\' : \'<C-c>ka\'', { expr = true })
+vim.keymap.set('i', '<C-f>', function() return move_forward_column_keystrokes() end, {expr = true})
+vim.keymap.set('i', '<C-b>', function() return move_backward_column_keystrokes() end, {expr = true})
+vim.keymap.set('i', '<C-n>', function() return move_next_line_keystrokes() end, {expr = true})
+vim.keymap.set('i', '<C-p>', function() return move_previous_line_keystrokes() end, {expr = true})
 
 vim.keymap.set('n', '<C-h>', ':bprevious<CR>')
 vim.keymap.set('n', '<C-l>', ':bnext<CR>')
 
 --- editing
-vim.keymap.set('i', '<C-d>', '<C-c>lxi')
+vim.keymap.set('i', '<C-d>', function() return delete_forward_character_keystrokes() end, {expr=true})
 vim.keymap.set('n', '<leader>q', '<cmd>lua delete_current_buffer()<CR>')
 
 -- terminal settings
