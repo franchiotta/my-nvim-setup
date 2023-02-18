@@ -1,6 +1,8 @@
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
   use 'scrooloose/nerdtree'
+  use { 'junegunn/fzf', run = ":call fzf#install()" }
+  use { 'junegunn/fzf.vim' }
   use {
       'wincent/command-t',
       run = 'cd lua/wincent/commandt/lib && make',
@@ -11,7 +13,7 @@ require('packer').startup(function()
         require('wincent.commandt').setup({
         })
       end,
-    }
+  }
   use 'ellisonleao/gruvbox.nvim'
   use 'neovim/nvim-lspconfig'
   use 'williamboman/mason.nvim'
@@ -21,15 +23,26 @@ require('packer').startup(function()
   use 'vim-airline/vim-airline'
   use 'vim-airline/vim-airline-themes' 
   use 'tpope/vim-fugitive'
+  use {
+      'iamcco/markdown-preview.nvim',
+      run = "cd app && npm install",
+      setup = function() vim.g.mkdp_filetypes = { "markdown" } end,
+      ft = { "markdown" }
+  }
 end)
 
 -- command-t
 vim.g.CommandTWildIgnore = ",venv,build,*.egg-info"
 vim.cmd('nnoremap <leader>t :CommandTGit<CR>')
 
+-- fzf
+vim.cmd('nnoremap <leader>b :Buffers<CR>')
+vim.cmd('nnoremap <leader>f :Files<CR>')
+
 -- nerdtree
 vim.cmd('nnoremap <leader>nt :NERDTree<CR>')
 vim.cmd('nnoremap <leader>ntf :NERDTreeFind<CR>')
+vim.cmd('nnoremap <leader>ntfc :NERDTreeFocus<CR>')
 vim.cmd('nnoremap <leader>ntt :NERDTreeToggle<CR>')
 vim.cmd('nnoremap <leader>ntb :NERDTreeFromBookmark ')
 vim.g.NERDTreeShowBookmarks = 1
