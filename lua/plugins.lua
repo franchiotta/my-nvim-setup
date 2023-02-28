@@ -56,7 +56,7 @@ vim.cmd('nnoremap <leader>t :CommandTGit<CR>')
 
 -- fzf
 vim.cmd('nnoremap <leader>b :Buffers<CR>')
-vim.cmd('nnoremap <leader>f :Files<CR>')
+vim.cmd('nnoremap <leader>f :GFiles<CR>')
 
 -- nerdtree
 vim.cmd('nnoremap <leader>nt :NERDTree<CR>')
