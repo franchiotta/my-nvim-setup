@@ -13,6 +13,9 @@ vim.opt.expandtab = true
 vim.opt.wrap = true
 vim.opt.encoding="utf-8"
 
+-- vim window options
+vim.wo.cursorline = true
+
 -- custom mapppings
 
 --- json parsing
