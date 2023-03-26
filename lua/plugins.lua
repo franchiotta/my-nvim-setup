@@ -49,6 +49,8 @@ require('packer').startup(function()
       ft = { "markdown" }
   }
   use 'szw/vim-maximizer'
+  use 'j-hui/fidget.nvim'
+  use 'github/copilot.vim'
 end)
 
 -- command-t
@@ -86,6 +88,9 @@ vim.g.airline_powerline_fonts = 1
 
 -- vim-maximizer
 vim.cmd('nnoremap <C-w>m :MaximizerToggle!<CR>')
+
+-- fidget
+require("fidget").setup()
 
 -- nvim-cmp
 local cmp = require'cmp'
