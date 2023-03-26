@@ -20,8 +20,9 @@ require('packer').startup(function()
   use 'ellisonleao/gruvbox.nvim'
 
   -- lsp
-  use 'neovim/nvim-lspconfig'
   use 'williamboman/mason.nvim'
+  use "williamboman/mason-lspconfig.nvim"
+  use 'neovim/nvim-lspconfig'
   use {
         "hrsh7th/nvim-cmp",
         requires = {
@@ -155,13 +156,14 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-  
+
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', 'ls', function() vim.lsp.buf.document_symbol({on_list=document_symbol_handler}) end, bufopts)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
   vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
   vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
@@ -174,6 +176,39 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
 end
 
+function document_symbol_handler(symbols)
+    symbol_list = {}
+    for key, symbol in pairs(symbols.items) do
+        if symbol.kind == 'Function'
+        then
+            table.insert(symbol_list, {
+                filename=symbol.filename,
+                lnum=symbol.lnum,
+                col=symbol.col,
+                text=symbol.text
+            })
+        end
+    end
+    vim.fn.setqflist(symbol_list)
+    vim.api.nvim_command(":copen")
+end
+
+-- mason
+require("mason").setup({
+    log_level = vim.log.levels.DEBUG,
+    ui = {
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        }
+    }
+})
+
+-- mason-lspconfig
+require("mason-lspconfig").setup()
+
+-- lspconfig
 require'lspconfig'.jedi_language_server.setup {
     on_attach = on_attach,
     capabilities = capabilities
