@@ -10,9 +10,54 @@ function delete_current_buffer()
     if vim.o.modified
     then
         vim.api.nvim_err_writeln('Cannot delete buffer, you have unsaved changes.')
+        vim.ui.input({prompt='You want to exit anyway? Type yes or no: '}, function(input)
+            if (input == 'yes' or input == 'YES')
+            then
+                vim.api.nvim_command('bp | sp | bn | bd!')
+            end
+        end)
     else
         vim.api.nvim_command('bp | sp | bn | bd')
     end
+end
+
+function delete_all_buffers_but_current_one()
+    current_buf_nr = vim.fn.bufnr('%')
+    for key, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
+        if buf.bufnr ~= current_buf_nr
+        then
+            if buf.changed == 1
+            then
+                vim.ui.input({prompt='Buffer: ' .. buf.name .. ' is modified, want to exit anyway? Type yes or no: '}, function(input)
+                    if (input == 'yes' or input == 'YES')
+                    then
+                        vim.api.nvim_command('bd! ' .. buf.bufnr)
+                    end
+                end)
+            else
+                vim.api.nvim_command('bd ' .. buf.bufnr)
+            end
+        end
+    end
+    vim.api.nvim_command(':AirlineRefresh')
+end
+
+function delete_all_buffers()
+    current_buf_nr = vim.fn.bufnr('%')
+    for key, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
+        if buf.changed == 1
+        then
+            vim.ui.input({prompt='Buffer: ' .. buf.name .. ' is modified, want to exit anyway? Type yes or no: '}, function(input)
+                if (input == 'yes' or input == 'YES')
+                then
+                    vim.api.nvim_command('bd! ' .. buf.bufnr)
+                end
+            end)
+        else
+            vim.api.nvim_command('bd ' .. buf.bufnr)
+        end
+    end
+    vim.api.nvim_command(':AirlineRefresh')
 end
 
 function move_forward_column_keystrokes()

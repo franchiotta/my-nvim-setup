@@ -42,6 +42,12 @@ vim.keymap.set('n', '<C-l>', ':bnext<CR>')
 --- editing
 vim.keymap.set('i', '<C-d>', function() return delete_forward_character_keystrokes() end, {expr=true})
 vim.keymap.set('n', '<leader>q', '<cmd>lua delete_current_buffer()<CR>')
+vim.keymap.set('n', '<leader>qa', '<cmd>lua delete_all_buffers()<CR>')
+vim.keymap.set('n', '<leader>qo', '<cmd>lua delete_all_buffers_but_current_one()<CR>')
+
+-- quickfix
+vim.keymap.set('n', '<leader>rn', ':cnext<CR>')
+vim.keymap.set('n', '<leader>rp', ':cprevious<CR>')
 
 -- terminal settings
  vim.api.nvim_command("autocmd TermOpen * startinsert")
