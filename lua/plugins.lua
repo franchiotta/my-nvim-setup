@@ -1,22 +1,6 @@
-require('packer').startup(function()
+require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use 'scrooloose/nerdtree'
-  use {
-      'junegunn/fzf',
-      run = ":call fzf#install()"
-  }
-  use 'junegunn/fzf.vim'
-  use {
-      'wincent/command-t',
-      run = 'cd lua/wincent/commandt/lib && make',
-      setup = function ()
-        vim.g.CommandTPreferredImplementation = 'lua'
-      end,
-      config = function()
-        require('wincent.commandt').setup({
-        })
-      end,
-  }
   use 'ellisonleao/gruvbox.nvim'
 
   -- lsp
@@ -35,12 +19,13 @@ require('packer').startup(function()
             'hrsh7th/vim-vsnip'
         }
   }
+  use 'github/copilot.vim'
 
   use 'udalov/kotlin-vim'
   use 'Einenlum/yaml-revealer'
   use 'preservim/nerdcommenter'
   use 'vim-airline/vim-airline'
-  use 'vim-airline/vim-airline-themes' 
+  use 'vim-airline/vim-airline-themes'
   use 'tpope/vim-fugitive'
   use {
       'iamcco/markdown-preview.nvim',
@@ -50,17 +35,18 @@ require('packer').startup(function()
   }
   use 'szw/vim-maximizer'
   use 'j-hui/fidget.nvim'
-  use 'github/copilot.vim'
+  use {
+      'nvim-telescope/telescope.nvim',
+      tag = '0.1.1',
+      requires = {
+          "nvim-lua/plenary.nvim"
+      }
+  }
 end)
 
 -- command-t
 vim.g.CommandTWildIgnore = ",venv,build,*.egg-info"
 vim.cmd('nnoremap <leader>t :CommandTGit<CR>')
-
--- fzf
-vim.cmd('nnoremap <leader>b :Buffers<CR>')
-vim.cmd('nnoremap <leader>f :Files<CR>')
-vim.cmd('nnoremap <leader>gf :GFiles<CR>')
 
 -- nerdtree
 vim.cmd('nnoremap <leader>nt :NERDTree<CR>')
@@ -70,7 +56,7 @@ vim.cmd('nnoremap <leader>ntt :NERDTreeToggle<CR>')
 vim.cmd('nnoremap <leader>ntb :NERDTreeFromBookmark ')
 --vim.api.nvim_command('autocmd VimEnter * NERDTree')
 
-vim.g.NERDTreeShowBookmarks = 1
+vim.g.NERDTreeShowBookmarks = 0
 vim.g.NERDTreeChDirMode = 2
 
 -- gruvbox
@@ -92,12 +78,23 @@ vim.cmd('nnoremap <C-w>m :MaximizerToggle!<CR>')
 -- fidget
 require("fidget").setup()
 
+-- telescope
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', function() builtin.find_files({hidden=true}) end, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+require('telescope').setup {
+    defaults = {
+        file_ignore_patterns = { "venv", "build", "*.egg-info" }
+    }
+}
+
 -- nvim-cmp
 local cmp = require'cmp'
 
 cmp.setup({
   snippet = {
-    -- REQUIRED - you must specify a snippet engine
     expand = function(args)
      vim.fn["vsnip#anonymous"](args.body)
     end
@@ -154,8 +151,8 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- lsd-config
 local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', '<space>dn', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', '<space>dn', vim.diagnostic.goto_next, opts)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
 local on_attach = function(client, bufnr)
@@ -163,11 +160,14 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+  vim.keymap.set('n', 'gT', vim.lsp.buf.type_definition, bufopts)
+
   vim.keymap.set('n', 'ls', function() vim.lsp.buf.document_symbol({on_list=document_symbol_handler}) end, bufopts)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
   vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
@@ -175,7 +175,6 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, bufopts)
-  vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
   vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
   vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
   vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
@@ -241,6 +240,9 @@ require'lspconfig'.gradle_ls.setup{
 
 require'lspconfig'.lua_ls.setup {
   on_attach = on_attach,
+  capabilities = capabilities,
+  -- Copied from 
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
   settings = {
     Lua = {
       runtime = {
@@ -258,9 +260,9 @@ require'lspconfig'.lua_ls.setup {
       -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = {
         enable = false,
-      },
-    },
-  },
+      }
+    }
+  }
 }
 
 -- Don't remove return, otherwise it will not load.
