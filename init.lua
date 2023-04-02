@@ -2,6 +2,7 @@ vim.g.mapleader = ","
 
 require('plugins')
 require('scripts')
+require('mappings.lsp')
 
 -- vim options
 vim.opt.showcmd = true
