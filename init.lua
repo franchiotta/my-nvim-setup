@@ -17,6 +17,9 @@ vim.opt.encoding="utf-8"
 -- vim window options
 vim.wo.cursorline = true
 
+vim.opt.list = true
+vim.opt.listchars = {tab = "⇥ ", nbsp = "·", trail = "␣", extends = "▸", precedes = "◂", eol = "↩"}
+
 -- custom mapppings
 
 --- json parsing
@@ -49,18 +52,25 @@ vim.keymap.set('n', '<leader>qo', '<cmd>lua delete_all_buffers_but_current_one()
 -- quickfix
 vim.keymap.set('n', '<leader>rn', ':cnext<CR>')
 vim.keymap.set('n', '<leader>rp', ':cprevious<CR>')
+vim.api.nvim_command("autocmd FileType qf set nobuflisted")
 
--- terminal settings
+ -- terminal settings
  vim.api.nvim_command("autocmd TermOpen * startinsert")
  vim.api.nvim_command("autocmd TermOpen * set nobuflisted")
  vim.api.nvim_command("command TermOpen bo 10new | lua open_or_create_terminal_buffer('terminal-buffer')")
 
 -- search commands
-vim.api.nvim_command("command -nargs=1 InsensitiveSearch vimgrep /\\c<args>/j `git ls-files`")
-vim.api.nvim_command("command -nargs=1 SensitiveSearch vimgrep /\\C<args>/j `git ls-files`")
-vim.api.nvim_command("command -nargs=1 IS InsensitiveSearch <args>")
-vim.api.nvim_command("command -nargs=1 SS SensitiveSearch <args>")
+vim.api.nvim_create_user_command('InsensitiveSearch', 'vimgrep /\\c<args>/j `git ls-files`', {nargs=1})
+vim.api.nvim_create_user_command('SensitiveSearch', 'vimgrep /\\C<args>/j `git ls-files`', {nargs=1})
+vim.api.nvim_create_user_command('IS', 'InsensitiveSearch <args>', {nargs=1})
+vim.api.nvim_create_user_command('SS', 'SensitiveSearch <args>', {nargs=1})
 
--- quickfix customizations
- vim.api.nvim_command("autocmd FileType qf set nobuflisted")
 
+vim.api.nvim_create_user_command("FileInfo", function()
+    local buffer_number = vim.fn.bufnr()
+    local number_of_lines = vim.fn.line("$")
+    local file_name = vim.fn.expand('%:p')
+    print(string.format('buf %d: %q %d lines', buffer_number, file_name, number_of_lines))
+end, {nargs = 0})
+
+vim.keymap.set('n', '<leader><leader>x', '<cmd>write <bar> source %<CR>')
