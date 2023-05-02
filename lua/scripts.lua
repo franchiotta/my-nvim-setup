@@ -1,4 +1,4 @@
-function open_or_create_terminal_buffer(buffer_name)
+local function open_or_create_terminal_buffer(buffer_name)
     if not pcall(vim.cmd, 'buffer' .. ' ' .. buffer_name)
     then
         vim.api.nvim_command('term')
@@ -6,7 +6,7 @@ function open_or_create_terminal_buffer(buffer_name)
     end
 end
 
-function delete_current_buffer()
+local function delete_current_buffer()
     if vim.o.modified
     then
         vim.api.nvim_err_writeln('Cannot delete buffer, you have unsaved changes.')
@@ -21,9 +21,9 @@ function delete_current_buffer()
     end
 end
 
-function delete_all_buffers_but_current_one()
-    current_buf_nr = vim.fn.bufnr('%')
-    for key, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
+local function delete_all_buffers_but_current_one()
+    local current_buf_nr = vim.fn.bufnr('%')
+    for _, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
         if buf.bufnr ~= current_buf_nr
         then
             if buf.changed == 1
@@ -42,9 +42,8 @@ function delete_all_buffers_but_current_one()
     vim.api.nvim_command(':AirlineRefresh')
 end
 
-function delete_all_buffers()
-    current_buf_nr = vim.fn.bufnr('%')
-    for key, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
+local function delete_all_buffers()
+    for _, buf in pairs(vim.fn.getbufinfo({buflisted=1})) do
         if buf.changed == 1
         then
             vim.ui.input({prompt='Buffer: ' .. buf.name .. ' is modified, want to exit anyway? Type yes or no: '}, function(input)
@@ -60,61 +59,73 @@ function delete_all_buffers()
     vim.api.nvim_command(':AirlineRefresh')
 end
 
-function move_forward_column_keystrokes()
+local function move_forward_column()
     if vim.fn.col(".") < vim.fn.col("$")
     then
-        return '<C-c>la'
+        vim.api.nvim_cmd({cmd='normal', args={'la'}},{})
     else
         if vim.fn.line(".") < vim.fn.line("$")
         then
-            return '<C-c>jI'
+            vim.api.nvim_cmd({cmd='normal', args={'jI'}},{})
         end
     end
 end
 
-function move_backward_column_keystrokes()
+local function move_backward_column()
     if vim.fn.col(".") == 1
     then
         if vim.fn.line(".") > 1
         then
-            return '<c-c>kA'
+            vim.api.nvim_cmd({cmd='normal', args={'kA'}},{})
         end
     else
-        return '<C-c>i'
+        vim.api.nvim_cmd({cmd='normal', args={'i'}},{})
     end
 end
 
-function move_next_line_keystrokes()
+local function move_next_line()
     if vim.fn.line(".") < vim.fn.line("$")
     then
-        return '<C-c>ja'
+        vim.api.nvim_cmd({cmd='normal', args={'ja'}},{})
     end
 end
 
-function move_previous_line_keystrokes()
+local function move_previous_line()
     if vim.fn.line(".") > 1
     then
-        return '<C-c>ka'
+        vim.api.nvim_cmd({cmd='normal', args={'ka'}},{})
     end
 end
 
-function delete_forward_character_keystrokes()
+local function delete_forward_character()
     if vim.fn.col(".") < vim.fn.col("$")
     then
         if vim.fn.col(".") == 1
         then
-            return '<C-c>xi'
+            vim.api.nvim_cmd({cmd='normal', args={'xi'}},{})
         end
         if (vim.fn.col(".") < vim.fn.col("$") - 1)
         then
-            return '<C-c>lxi'
+            vim.api.nvim_cmd({cmd='normal', args={'lxi'}},{})
         else
-            return '<C-c>lxa'
+            vim.api.nvim_cmd({cmd='normal', args={'lxa'}},{})
         end
     else
         if vim.fn.line(".") < vim.fn.line("$")
         then
-            return '<C-c>gJi'
+            vim.api.nvim_cmd({cmd='normal', args={'gJi'}},{})
         end
     end
 end
+
+return {
+    open_or_create_terminal_buffer = open_or_create_terminal_buffer,
+    delete_current_buffer = delete_current_buffer,
+    delete_all_buffers_but_current_one = delete_all_buffers_but_current_one,
+    delete_all_buffers = delete_all_buffers,
+    move_forward_column = move_forward_column,
+    move_backward_column = move_backward_column,
+    move_next_line = move_next_line,
+    move_previous_line = move_previous_line,
+    delete_forward_character = delete_forward_character
+}

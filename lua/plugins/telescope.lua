@@ -5,7 +5,7 @@ vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 require('telescope').setup {
     defaults = {
-        file_ignore_patterns = { "venv", "build", "*.egg-info", ".gradle", ".git", "node_modules", "target", ".idea" }
+        file_ignore_patterns = { "venv", "build/", "*.egg-info", ".gradle/", ".git", "node_modules", "target", ".idea" }
     }
 }
 

@@ -1,7 +1,7 @@
 vim.g.mapleader = ","
 
 require('plugins')
-require('scripts')
+local scripts = require('scripts')
 require('mappings.lsp')
 
 -- vim options
@@ -20,6 +20,8 @@ vim.wo.cursorline = true
 vim.opt.list = true
 vim.opt.listchars = {tab = "⇥ ", nbsp = "·", trail = "␣", extends = "▸", precedes = "◂", eol = "↩"}
 
+vim.opt.conceallevel = 2
+
 -- custom mapppings
 
 --- json parsing
@@ -35,19 +37,19 @@ vim.keymap.set('n', 'unq', 'di"hPl2x')
 vim.keymap.set('n', 'sunq', 'di\'hPl2x')
 
 --- moving
-vim.keymap.set('i', '<C-f>', function() return move_forward_column_keystrokes() end, {expr = true})
-vim.keymap.set('i', '<C-b>', function() return move_backward_column_keystrokes() end, {expr = true})
-vim.keymap.set('i', '<C-n>', function() return move_next_line_keystrokes() end, {expr = true})
-vim.keymap.set('i', '<C-p>', function() return move_previous_line_keystrokes() end, {expr = true})
+vim.keymap.set('i', '<C-f>', scripts.move_forward_column)
+vim.keymap.set('i', '<C-b>', scripts.move_backward_column)
+vim.keymap.set('i', '<C-n>', scripts.move_next_line)
+vim.keymap.set('i', '<C-p>', scripts.move_previous_line)
 
 vim.keymap.set('n', '<C-h>', ':bprevious<CR>')
 vim.keymap.set('n', '<C-l>', ':bnext<CR>')
 
 --- editing
-vim.keymap.set('i', '<C-d>', function() return delete_forward_character_keystrokes() end, {expr=true})
-vim.keymap.set('n', '<leader>q', '<cmd>lua delete_current_buffer()<CR>')
-vim.keymap.set('n', '<leader>qa', '<cmd>lua delete_all_buffers()<CR>')
-vim.keymap.set('n', '<leader>qo', '<cmd>lua delete_all_buffers_but_current_one()<CR>')
+vim.keymap.set('i', '<C-d>', scripts.delete_forward_character)
+vim.keymap.set('n', '<leader>q', scripts.delete_current_buffer)
+vim.keymap.set('n', '<leader>qa', scripts.delete_all_buffers)
+vim.keymap.set('n', '<leader>qo', scripts.delete_all_buffers_but_current_one)
 
 -- quickfix
 vim.keymap.set('n', '<leader>rn', ':cnext<CR>')
@@ -55,9 +57,12 @@ vim.keymap.set('n', '<leader>rp', ':cprevious<CR>')
 vim.api.nvim_command("autocmd FileType qf set nobuflisted")
 
  -- terminal settings
- vim.api.nvim_command("autocmd TermOpen * startinsert")
- vim.api.nvim_command("autocmd TermOpen * set nobuflisted")
- vim.api.nvim_command("command TermOpen bo 10new | lua open_or_create_terminal_buffer('terminal-buffer')")
+vim.api.nvim_create_autocmd("TermOpen", {command = "startinsert"})
+vim.api.nvim_create_autocmd("TermOpen", {command = "set nobuflisted"})
+vim.api.nvim_create_user_command("TermOpen", function()
+    vim.api.nvim_command('botright 10new')
+    scripts.open_or_create_terminal_buffer('terminal-buffer')
+end, {nargs=0})
 
 -- search commands
 vim.api.nvim_create_user_command('InsensitiveSearch', 'vimgrep /\\c<args>/j `git ls-files`', {nargs=1})
@@ -71,6 +76,6 @@ vim.api.nvim_create_user_command("FileInfo", function()
     local number_of_lines = vim.fn.line("$")
     local file_name = vim.fn.expand('%:p')
     print(string.format('buf %d: %q %d lines', buffer_number, file_name, number_of_lines))
-end, {nargs = 0})
+end, {nargs = 0, desc = 'Prints file info'})
 
-vim.keymap.set('n', '<leader><leader>x', '<cmd>write <bar> source %<CR>')
+vim.keymap.set('n', '<leader><leader>x', '<cmd>write <bar> source %<CR>', {desc = 'Save and source current file'})

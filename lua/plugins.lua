@@ -29,6 +29,7 @@ require('packer').startup(function(use)
   use 'vim-airline/vim-airline'
   use 'vim-airline/vim-airline-themes'
   use 'tpope/vim-fugitive'
+  use 'preservim/vim-markdown'
   use {
       'iamcco/markdown-preview.nvim',
       run = "cd app && npm install",

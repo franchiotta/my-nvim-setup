@@ -1,4 +1,6 @@
 local cmp = require'cmp'
+local types = require'cmp.types'
+local scripts = require'scripts'
 
 cmp.setup({
   snippet = {
@@ -16,6 +18,20 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<C-P>'] = function()
+        if cmp.visible() then
+          cmp.select_prev_item({ behavior = types.cmp.SelectBehavior.Insert })
+        else
+          scripts.move_previous_line()
+        end
+      end,
+    ['<C-N>'] = function()
+        if cmp.visible() then
+          cmp.select_next_item({ behavior = types.cmp.SelectBehavior.Insert })
+        else
+          scripts.move_next_line()
+        end
+      end
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
