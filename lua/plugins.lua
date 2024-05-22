@@ -1,6 +1,6 @@
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
-  use 'scrooloose/nerdtree'
+  --use 'scrooloose/nerdtree'
   use 'ellisonleao/gruvbox.nvim'
 
   -- lsp
@@ -20,7 +20,6 @@ require('packer').startup(function(use)
         }
   }
   use 'mfussenegger/nvim-jdtls'
-  use 'github/copilot.vim'
 
   use "folke/neodev.nvim"
   use 'udalov/kotlin-vim'
@@ -40,10 +39,23 @@ require('packer').startup(function(use)
   use 'j-hui/fidget.nvim'
   use {
       'nvim-telescope/telescope.nvim',
-      tag = '0.1.1',
+      tag = '0.1.6',
       requires = {
           "nvim-lua/plenary.nvim"
       }
+  }
+  use 'elzr/vim-json'
+  use 'lepture/vim-jinja'
+  use 'hashivim/vim-terraform'
+  use {
+  "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    requires = { 
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    }
   }
 end)
 
@@ -51,13 +63,13 @@ end)
 vim.g.CommandTWildIgnore = ",venv,build,*.egg-info"
 vim.cmd('nnoremap <leader>t :CommandTGit<CR>')
 
--- nerdtree
-vim.cmd('nnoremap <leader>nt :NERDTree<CR>')
-vim.cmd('nnoremap <leader>ntf :NERDTreeFind<CR>')
-vim.cmd('nnoremap <leader>ntfc :NERDTreeFocus<CR>')
-vim.cmd('nnoremap <leader>ntt :NERDTreeToggle<CR>')
-vim.cmd('nnoremap <leader>ntb :NERDTreeFromBookmark ')
---vim.api.nvim_command('autocmd VimEnter * NERDTree')
+---- nerdtree
+--vim.cmd('nnoremap <leader>nt :NERDTree<CR>')
+--vim.cmd('nnoremap <leader>ntf :NERDTreeFind<CR>')
+--vim.cmd('nnoremap <leader>ntfc :NERDTreeFocus<CR>')
+--vim.cmd('nnoremap <leader>ntt :NERDTreeToggle<CR>')
+--vim.cmd('nnoremap <leader>ntb :NERDTreeFromBookmark ')
+----vim.api.nvim_command('autocmd VimEnter * NERDTree')
 
 vim.g.NERDTreeShowBookmarks = 0
 vim.g.NERDTreeChDirMode = 2
@@ -80,6 +92,9 @@ vim.cmd('nnoremap <C-w>m :MaximizerToggle!<CR>')
 
 -- fidget
 require("fidget").setup()
+
+-- neotree
+require('plugins.neotree')
 
 -- telescope
 require('plugins.telescope')
@@ -107,6 +122,10 @@ require("mason-lspconfig").setup()
 
 -- lspconfig
 require('plugins.lspconfig')
+
+-- vim-jinja
+vim.api.nvim_create_user_command('FormatJinja', 'set ft=jinja', {nargs=0})
+vim.api.nvim_create_user_command('FormatJson', 'set ft=json', {nargs=0})
 
 -- Don't remove return, otherwise it will not load.
 return

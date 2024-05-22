@@ -60,26 +60,32 @@ local function delete_all_buffers()
 end
 
 local function move_forward_column()
-    if vim.fn.col(".") < vim.fn.col("$")
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    -- row index starts from 1.
+    -- col index starts from 0
+    if col < vim.fn.col("$") - 1
     then
-        vim.api.nvim_cmd({cmd='normal', args={'la'}},{})
+        vim.api.nvim_win_set_cursor(0, {row,col+1})
     else
-        if vim.fn.line(".") < vim.fn.line("$")
+        if row < vim.fn.line("$")
         then
-            vim.api.nvim_cmd({cmd='normal', args={'jI'}},{})
+            vim.api.nvim_win_set_cursor(0, {row+1,0})
         end
     end
 end
 
 local function move_backward_column()
-    if vim.fn.col(".") == 1
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    -- row index starts from 1.
+    -- col index starts from 0
+    if col == 0
     then
-        if vim.fn.line(".") > 1
+        if row > 1
         then
-            vim.api.nvim_cmd({cmd='normal', args={'kA'}},{})
+            vim.api.nvim_win_set_cursor(0, {row-1,vim.fn.col({row-1,"$"})})
         end
     else
-        vim.api.nvim_cmd({cmd='normal', args={'i'}},{})
+        vim.api.nvim_win_set_cursor(0, {row,col-1})
     end
 end
 
@@ -97,6 +103,7 @@ local function move_previous_line()
     end
 end
 
+-- FIX THIS!
 local function delete_forward_character()
     if vim.fn.col(".") < vim.fn.col("$")
     then
