@@ -1,21 +1,21 @@
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
-require'lspconfig'.jedi_language_server.setup {
+vim.lsp.config('jedi_language_server', {
     capabilities = capabilities
-}
+})
 
-require'lspconfig'.kotlin_language_server.setup {
+vim.lsp.config('kotlin_language_server', {
     capabilities = capabilities
-}
+})
 
-require'lspconfig'.groovyls.setup{
+vim.lsp.config('groovyls', {
     capabilities = capabilities
-}
+})
 
-require'lspconfig'.gradle_ls.setup{
+vim.lsp.config('gradle_ls', {
     capabilities = capabilities
-}
+})
 
-require'lspconfig'.lua_ls.setup {
+vim.lsp.config('lua_ls', {
   capabilities = capabilities,
   -- Copied from https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
   settings = {
@@ -35,6 +35,6 @@ require'lspconfig'.lua_ls.setup {
       }
     }
   }
-}
+})
 
 return
